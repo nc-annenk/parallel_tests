@@ -8,3 +8,7 @@ gem 'rspec', '~> 3.3'
 gem 'cucumber', "~> 3.0"
 gem 'spinach'
 gem 'rake'
+
+# delete me
+gem 'pry'
+

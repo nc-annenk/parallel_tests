@@ -45,7 +45,6 @@ module ParallelTests
 
         def tests_with_size(tests, options)
           tests = find_tests(tests, options)
-
           case options[:group_by]
           when :found
             tests.map! { |t| [t, 1] }
@@ -208,13 +207,8 @@ module ParallelTests
           tests.map! { |test| [test, File.stat(test).size] }
         end
 
-        def find_tests(tests, options = {})
-          tests_list = all_tests(tests, options)
-          exclude_tests(tests_list, options)
-        end
-
-        def all_tests(tests, options)
-          (tests || []).map do |file_or_folder|
+        def find_tests(tests = [], options)
+          file_list = tests.map do |file_or_folder|
             if File.directory?(file_or_folder)
               files = files_in_folder(file_or_folder, options)
               files.grep(options[:suffix] || test_suffix)
@@ -223,10 +217,7 @@ module ParallelTests
               file_or_folder
             end
           end.flatten.uniq
-        end
-
-        def exclude_tests(tests_list, options = {})
-          tests_list.reject { |file| file =~ (options[:exclude_pattern] || //) }
+          file_list.reject! { |file| file =~ regex } if regex = options[:exclude_pattern]
         end
 
         def files_in_folder(folder, options={})
